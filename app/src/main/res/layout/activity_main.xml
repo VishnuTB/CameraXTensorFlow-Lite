@@ -27,6 +27,17 @@
         app:layout_constraintEnd_toStartOf="@id/video_capture_button"
         app:layout_constraintStart_toEndOf="@id/card_preview" />
 
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/video_capture_button"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginBottom="20dp"
+        android:elevation="2dp"
+        android:scaleType="fitXY"
+        android:src="@android:drawable/presence_video_away"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/card_preview"
         android:layout_width="80dp"
@@ -46,18 +57,25 @@
 
     </com.google.android.material.card.MaterialCardView>
 
-    <androidx.appcompat.widget.AppCompatImageButton
-        android:id="@+id/video_capture_button"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_marginBottom="20dp"
-        android:elevation="2dp"
-        android:scaleType="fitXY"
-        android:src="@android:drawable/presence_video_away"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+    <com.google.android.material.textview.MaterialTextView
+        style="@style/TextAppearance.AppCompat.Body2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/detected_items"
+        android:textColor="@android:color/white"
+        app:layout_constraintBottom_toTopOf="@id/detectedItems"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/detectedItems"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@id/card_preview"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/options"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
@@ -71,13 +89,6 @@
             android:layout_height="wrap_content"
             android:textOff="@string/flash_off"
             android:textOn="@string/flash_on" />
-
-        <androidx.appcompat.widget.AppCompatToggleButton
-            android:id="@+id/small_image"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textOff="@string/compact"
-            android:textOn="@string/full_size" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 

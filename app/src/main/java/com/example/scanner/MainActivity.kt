@@ -19,6 +19,7 @@ import androidx.camera.video.VideoCapture
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.scanner.databinding.ActivityMainBinding
+import com.google.android.material.textview.MaterialTextView
 import org.tensorflow.lite.support.image.TensorImage
 import org.tensorflow.lite.task.vision.detector.Detection
 import org.tensorflow.lite.task.vision.detector.ObjectDetector
@@ -61,12 +62,6 @@ class MainActivity : AppCompatActivity() {
         viewBinding.videoCaptureButton.setOnClickListener { captureVideo() }
         viewBinding.toggleFlash.setOnCheckedChangeListener { _, isChecked ->
             toggleFlash(isChecked)
-        }
-
-        viewBinding.smallImage.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-
-            }
         }
 
         cameraExecutor = Executors.newSingleThreadExecutor()
@@ -118,7 +113,7 @@ class MainActivity : AppCompatActivity() {
                     val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, output.savedUri)
                     viewBinding.imagePreview.setImageBitmap(ImageUtils.rotateImage(bitmap, 90f))
                     runObjectDetection(bitmap)
-                    Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
+//                    Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
                     Log.d(TAG, msg)
                 }
             }
@@ -140,7 +135,7 @@ class MainActivity : AppCompatActivity() {
         val results = detector.detect(tensorImage)
 
         Toast.makeText(baseContext, "Results Found : ${results.size}", Toast.LENGTH_SHORT).show()
-
+        viewBinding.detectedItems.removeAllViews()
         debugPrint(results)
 
     }
@@ -151,11 +146,14 @@ class MainActivity : AppCompatActivity() {
 
             Log.d(TAG, "Detected object: ${i} ")
             Log.d(TAG, "  boundingBox: (${box.left}, ${box.top}) - (${box.right},${box.bottom})")
-
             for ((j, category) in obj.categories.withIndex()) {
                 Log.d(TAG, "    Label $j: ${category.label}")
                 val confidence: Int = category.score.times(100).toInt()
                 Log.d(TAG, "    Confidence: ${confidence}%")
+                val textView = MaterialTextView(this);
+                textView.setTextColor(resources.getColor(android.R.color.white))
+                textView.text = "${category.label} : ${confidence}%"
+                viewBinding.detectedItems.addView(textView)
             }
         }
     }
@@ -206,7 +204,6 @@ class MainActivity : AppCompatActivity() {
 
         }, ContextCompat.getMainExecutor(this))
     }
-
 
     private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
         ContextCompat.checkSelfPermission(

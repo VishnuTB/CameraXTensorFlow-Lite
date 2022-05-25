@@ -4,4 +4,6 @@
     <string name="flash_on">Flash On</string>
     <string name="compact">Compact</string>
     <string name="full_size">Full Size</string>
+    <string name="available_resolutions">Available resolutions</string>
+    <string name="detected_items">Detected items</string>
 </resources>
