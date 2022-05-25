@@ -2,4 +2,6 @@
     <string name="app_name">Scanner</string>
     <string name="flash_off">Flash Off</string>
     <string name="flash_on">Flash On</string>
+    <string name="compact">Compact</string>
+    <string name="full_size">Full Size</string>
 </resources>

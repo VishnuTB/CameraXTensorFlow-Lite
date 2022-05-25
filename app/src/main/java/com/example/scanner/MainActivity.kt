@@ -4,11 +4,11 @@ import android.Manifest
 import android.content.ContentValues
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.graphics.Matrix
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
+import android.util.Size
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.*
@@ -63,6 +63,12 @@ class MainActivity : AppCompatActivity() {
             toggleFlash(isChecked)
         }
 
+        viewBinding.smallImage.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+
+            }
+        }
+
         cameraExecutor = Executors.newSingleThreadExecutor()
     }
 
@@ -75,10 +81,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun takePhoto() {
-        // Get a stable reference of the modifiable image capture use case
         val imageCapture = imageCapture ?: return
 
-        // Create time stamped name and MediaStore entry.
         val name = SimpleDateFormat(FILENAME_FORMAT, Locale.getDefault())
             .format(System.currentTimeMillis())
         val contentValues = ContentValues().apply {
@@ -89,7 +93,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // Create output options object which contains file + metadata
         val outputOptions = ImageCapture.OutputFileOptions
             .Builder(
                 contentResolver,
@@ -113,7 +116,7 @@ class MainActivity : AppCompatActivity() {
                         onImageSaved(output: ImageCapture.OutputFileResults) {
                     val msg = "Photo capture succeeded: ${output.savedUri}"
                     val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, output.savedUri)
-                    viewBinding.imagePreview.setImageBitmap(rotateImage(bitmap, 90f))
+                    viewBinding.imagePreview.setImageBitmap(ImageUtils.rotateImage(bitmap, 90f))
                     runObjectDetection(bitmap)
                     Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
                     Log.d(TAG, msg)
@@ -123,7 +126,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun runObjectDetection(bitmap: Bitmap) {
-        //TODO: Add object detection code here
         val tensorImage = TensorImage.fromBitmap(bitmap)
 
         val options = ObjectDetector.ObjectDetectorOptions.builder()
@@ -131,11 +133,13 @@ class MainActivity : AppCompatActivity() {
             .setScoreThreshold(0.5f)
             .build()
         val detector = ObjectDetector.createFromFileAndOptions(
-            this, // the application context
-            "model1.tflite", // must be same as the filename in assets folder
+            applicationContext,
+            "model1.tflite",
             options
         )
         val results = detector.detect(tensorImage)
+
+        Toast.makeText(baseContext, "Results Found : ${results.size}", Toast.LENGTH_SHORT).show()
 
         debugPrint(results)
 
@@ -154,9 +158,7 @@ class MainActivity : AppCompatActivity() {
                 Log.d(TAG, "    Confidence: ${confidence}%")
             }
         }
-
     }
-
 
     private fun captureVideo() {}
 
@@ -178,6 +180,7 @@ class MainActivity : AppCompatActivity() {
                 .build()
 
             val imageAnalyzer = ImageAnalysis.Builder()
+                .setTargetResolution(Size(1280, 720))
                 .build()
 //                .also {
 //                    it.setAnalyzer(cameraExecutor, LuminosityAnalyzer { luma ->
@@ -204,14 +207,6 @@ class MainActivity : AppCompatActivity() {
         }, ContextCompat.getMainExecutor(this))
     }
 
-    private fun rotateImage(source: Bitmap, angle: Float): Bitmap {
-        val matrix = Matrix()
-        matrix.postRotate(angle)
-        return Bitmap.createBitmap(
-            source, 0, 0, source.width, source.height,
-            matrix, true
-        )
-    }
 
     private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
         ContextCompat.checkSelfPermission(
@@ -242,7 +237,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-
 
     companion object {
         private const val TAG = "CameraXApp"
