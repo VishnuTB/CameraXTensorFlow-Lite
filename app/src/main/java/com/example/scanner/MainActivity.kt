@@ -59,8 +59,19 @@ class MainActivity : AppCompatActivity() {
         // Set up the listeners for take photo and video capture buttons
         viewBinding.imageCaptureButton.setOnClickListener { takePhoto() }
         viewBinding.videoCaptureButton.setOnClickListener { captureVideo() }
+        viewBinding.toggleFlash.setOnCheckedChangeListener { _, isChecked ->
+            toggleFlash(isChecked)
+        }
 
         cameraExecutor = Executors.newSingleThreadExecutor()
+    }
+
+    private fun toggleFlash(status: Boolean) {
+        if (imageCapture == null) {
+            return
+        }
+        imageCapture?.flashMode =
+            if (status) ImageCapture.FLASH_MODE_ON else ImageCapture.FLASH_MODE_OFF
     }
 
     private fun takePhoto() {
@@ -86,6 +97,7 @@ class MainActivity : AppCompatActivity() {
                 contentValues
             )
             .build()
+
 
         // Set up image capture listener, which is triggered after photo has
         // been taken
